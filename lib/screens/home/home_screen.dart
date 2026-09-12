@@ -16,6 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String? _todayMood = 'Bagus';
   int _waterGlasses = 5;
   int _selectedDayIndex = 5; // Saturday (today)
+  final Set<String> _todayTriggers = {'Layar >4j'};
 
   String _greeting() {
     final hour = DateTime.now().hour;
@@ -50,8 +51,8 @@ class _HomeScreenState extends State<HomeScreen> {
             top: -60,
             left: -40,
             child: Container(
-              width: 220,
-              height: 220,
+              width: 230,
+              height: 230,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
@@ -67,8 +68,8 @@ class _HomeScreenState extends State<HomeScreen> {
             top: 140,
             right: -60,
             child: Container(
-              width: 200,
-              height: 200,
+              width: 210,
+              height: 210,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
@@ -120,12 +121,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 const SizedBox(height: 24),
 
-                // 5. Daily Wellness & Interactive Check-in Card
+                // 5. Daily Wellness & Interactive Check-in Card (with Triggers & Hydration)
                 _buildWellnessCheckInCard(context),
 
                 const SizedBox(height: 24),
 
-                // 6. Upcoming Teleconsultation Spotlight Card
+                // 6. Guided Breathing & Relaxation Card (Fitur Relaksasi Dekoratif)
+                _buildRelaxationCard(context),
+
+                const SizedBox(height: 24),
+
+                // 7. Upcoming Teleconsultation Spotlight Card
                 _buildSectionHeader(
                   title: 'Konsultasi Dokter',
                   badgeText: 'Jadwal Aktif',
@@ -138,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 const SizedBox(height: 24),
 
-                // 7. Health Insights & Actionable Tips
+                // 8. Health Insights & Actionable Tips
                 _buildSectionHeader(
                   title: 'Insight & Rekomendasi',
                   badgeText: 'AI Analisis',
@@ -149,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 const SizedBox(height: 24),
 
-                // 8. Articles Preview Carousel
+                // 9. Articles Preview Carousel
                 _buildSectionHeader(
                   title: 'Edukasi Sakit Kepala',
                   badgeText: 'Tips Sehat',
@@ -162,12 +168,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 const SizedBox(height: 22),
 
-                // 9. Emergency & Red Flags Assistance Card
+                // 10. Emergency & Red Flags Assistance Card
                 _buildEmergencyBanner(context),
 
                 const SizedBox(height: 20),
 
-                // 10. Medical Disclaimer Footer
+                // 11. Medical Disclaimer Footer
                 _buildDisclaimerCard(),
 
                 const SizedBox(height: 24),
@@ -1203,6 +1209,31 @@ class _HomeScreenState extends State<HomeScreen> {
             const Divider(color: AppColors.borderLight, height: 1),
             const SizedBox(height: 16),
 
+            // Today's Exposure & Triggers Quick Checklist
+            Text(
+              'Paparan yang Anda Rasakan Hari Ini',
+              style: AppTypography.labelSmall.copyWith(
+                fontWeight: FontWeight.bold,
+                color: AppColors.textSecondary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: [
+                _buildTriggerChip('Layar >4j', LucideIcons.monitor),
+                _buildTriggerChip('Kurang Tidur', LucideIcons.moon),
+                _buildTriggerChip('Dehidrasi', LucideIcons.droplets),
+                _buildTriggerChip('Beban Stres', LucideIcons.zap),
+                _buildTriggerChip('Telat Makan', LucideIcons.clock),
+              ],
+            ),
+
+            const SizedBox(height: 16),
+            const Divider(color: AppColors.borderLight, height: 1),
+            const SizedBox(height: 16),
+
             // Daily Hydration & Sleep Mini Trackers
             Row(
               children: [
@@ -1396,6 +1427,51 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget _buildTriggerChip(String label, IconData icon) {
+    final isSelected = _todayTriggers.contains(label);
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          if (isSelected) {
+            _todayTriggers.remove(label);
+          } else {
+            _todayTriggers.add(label);
+          }
+        });
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFFEFF6FF) : AppColors.background,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: isSelected ? AppColors.primary : AppColors.border,
+            width: isSelected ? 1.5 : 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 12,
+              color: isSelected ? AppColors.primary : AppColors.textSecondary,
+            ),
+            const SizedBox(width: 5),
+            Text(
+              label,
+              style: AppTypography.labelSmall.copyWith(
+                color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildInteractiveMood({
     required IconData icon,
     required String label,
@@ -1494,7 +1570,185 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // ==========================================
-  // 6. DOCTOR SPOTLIGHT / APPOINTMENT CARD
+  // 6. GUIDED RELAXATION CARD (DECORATIVE FEATURE)
+  // ==========================================
+  Widget _buildRelaxationCard(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Container(
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFFF0FDF4), Color(0xFFDCFCE7)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(color: const Color(0xFFBBF7D0)),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF16A34A).withAlpha(20),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF16A34A).withAlpha(30),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: const Center(
+                child: Icon(
+                  LucideIcons.wind,
+                  color: Color(0xFF16A34A),
+                  size: 24,
+                ),
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Relaksasi Pernapasan 4-7-8',
+                    style: AppTypography.titleMedium.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF14532D),
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Redakan ketegangan otot leher & saraf pemicu sakit kepala.',
+                    style: AppTypography.caption.copyWith(
+                      color: const Color(0xFF166534),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            GestureDetector(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    title: Row(
+                      children: [
+                        const Icon(
+                          LucideIcons.wind,
+                          color: Color(0xFF16A34A),
+                          size: 22,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Pernapasan 4-7-8',
+                          style: AppTypography.titleLarge,
+                        ),
+                      ],
+                    ),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFDCFCE7),
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: const Color(0xFF16A34A),
+                              width: 2,
+                            ),
+                          ),
+                          child: const Center(
+                            child: Icon(
+                              LucideIcons.heartPulse,
+                              size: 36,
+                              color: Color(0xFF16A34A),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          '1. Tarik napas pelan melalui hidung (4 detik)\n2. Tahan napas dengan rileks (7 detik)\n3. Hembuskan perlahan lewat mulut (8 detik)',
+                          style: AppTypography.bodySmall.copyWith(height: 1.6),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 12),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF0FDF4),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            'Ulangi siklus ini 4 kali untuk hasil optimal.',
+                            style: AppTypography.labelSmall.copyWith(
+                              color: const Color(0xFF15803D),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      ElevatedButton(
+                        onPressed: () => Navigator.pop(ctx),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF16A34A),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: const Text('Selesai'),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF16A34A),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  'Latihan',
+                  style: AppTypography.labelSmall.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ==========================================
+  // 7. DOCTOR SPOTLIGHT / APPOINTMENT CARD
   // ==========================================
   Widget _buildDoctorSpotlightCard(BuildContext context, Doctor doctor) {
     return Padding(
@@ -1683,7 +1937,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // ==========================================
-  // 7. HEALTH INSIGHTS LIST
+  // 8. HEALTH INSIGHTS LIST
   // ==========================================
   Widget _buildHealthInsightsList(BuildContext context) {
     final insights = MockData.healthInsights.take(2).toList();
@@ -1773,7 +2027,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // ==========================================
-  // 8. ARTICLES PREVIEW CAROUSEL
+  // 9. ARTICLES PREVIEW CAROUSEL
   // ==========================================
   Widget _buildArticlesPreview(
     BuildContext context,
@@ -1885,7 +2139,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // ==========================================
-  // 9. EMERGENCY & RED FLAGS BANNER
+  // 10. EMERGENCY & RED FLAGS BANNER
   // ==========================================
   Widget _buildEmergencyBanner(BuildContext context) {
     return Padding(
@@ -1981,7 +2235,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // ==========================================
-  // 10. DISCLAIMER FOOTER
+  // 11. DISCLAIMER FOOTER
   // ==========================================
   Widget _buildDisclaimerCard() {
     return Padding(
