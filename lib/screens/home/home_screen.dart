@@ -664,7 +664,6 @@ class _HomeScreenState extends State<HomeScreen> {
   // 3. WEEKLY CALENDAR STRIP (DECORATIVE 7 DAYS)
   // ==========================================
   Widget _buildWeeklyCalendarStrip(BuildContext context, int episodesThisWeek) {
-    // 7 days of the current week (Sep 6 - Sep 12)
     final days = [
       {'day': 'Min', 'date': '6', 'status': 'episode', 'intensity': '7'},
       {'day': 'Sen', 'date': '7', 'status': 'clean', 'intensity': '0'},
